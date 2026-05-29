@@ -34,6 +34,7 @@ The current goal is to prove the core structure:
 - The GitHub Pages site now runs a lightweight browser prototype with `PRESS START`, `NEW GAME`, `CONTINUE`, ghost judgments, endings, and browser-local saves.
 - Every new browser run starts with clear how-to-play instructions before the first ghost.
 - The Pages prototype includes a browser-native narrator toggle for the instructions and story beats.
+- The Pages prototype now uses extracted GDD concept art for the case screen, judgement screen, character moments, and scene backgrounds.
 - The prototype covers all nine ghosts from the GDD.
 - Each ghost has an explore/evidence/confront/judge loop.
 - Heaven/Hell choices are tracked.
@@ -110,8 +111,8 @@ The foundation includes neutral systems for scene definitions, contextual hotspo
 - In the Pages prototype, use `NARRATOR ON` if you want the browser to read instructions and story text aloud.
 - Left click to walk or interact.
 - Right click to inspect.
-- Click the forest/hotspots to gather evidence and context.
-- Click the well to confront and judge the current ghost.
+- Click `SEARCH` to gather evidence and context.
+- Once all three evidence marks are filled, open the judgement screen and choose `DAMNATION` or `SALVATION`.
 - Use the sky/status hotspot to view progress or the unlocked ending.
 
 ## Narration and voice

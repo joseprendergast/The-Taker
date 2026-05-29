@@ -15,6 +15,7 @@
       --green: #8dbf91;
       --panel: rgba(5, 7, 13, 0.78);
       --line: rgba(216, 193, 122, 0.38);
+      --scene-image: url("Assets/Game/Rooms/Title/Sprites/Back_0.png");
     }
 
     * { box-sizing: border-box; }
@@ -49,8 +50,7 @@
       background:
         linear-gradient(90deg, rgba(5, 7, 13, 0.28), rgba(5, 7, 13, 0.84)),
         linear-gradient(180deg, rgba(5, 7, 13, 0.08), rgba(5, 7, 13, 0.88)),
-        url("Assets/Game/Rooms/Title/Sprites/Back_0.png") center / cover no-repeat;
-      image-rendering: pixelated;
+        var(--scene-image) center / cover no-repeat;
       transform: scale(1.04);
       z-index: -2;
     }
@@ -91,10 +91,27 @@
       line-height: 1.5;
     }
 
+    .title-art-strip {
+      width: min(620px, 100%);
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 0.7fr 1.4fr 0.9fr;
+      gap: 10px;
+    }
+
+    .title-art-strip img {
+      width: 100%;
+      height: 156px;
+      object-fit: cover;
+      border: 1px solid rgba(216, 193, 122, 0.36);
+      filter: saturate(0.82) contrast(1.08) brightness(0.82);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.34);
+    }
+
     .menu, .game-panel {
       border: 1px solid var(--line);
       background: var(--panel);
-      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.42);
+      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.5);
     }
 
     .menu { padding: 18px; }
@@ -143,18 +160,76 @@
     }
 
     .game-stage {
-      width: min(980px, 100%);
+      width: min(1180px, 100%);
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 290px;
+      grid-template-columns: minmax(0, 1fr) 300px;
       gap: 18px;
       align-items: stretch;
     }
 
     .game-panel {
-      min-height: 470px;
+      min-height: 560px;
       padding: 22px;
       display: grid;
+      grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1fr);
+      gap: 22px;
       align-content: space-between;
+    }
+
+    .scene-art {
+      position: relative;
+      min-height: 500px;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(216, 193, 122, 0.42);
+      background: #05070d;
+      box-shadow: inset 0 0 64px rgba(0, 0, 0, 0.5);
+    }
+
+    .scene-art img {
+      width: 100%;
+      height: 100%;
+      min-height: 500px;
+      display: block;
+      object-fit: cover;
+      filter: saturate(0.86) contrast(1.08) brightness(0.82);
+      transform: scale(1.02);
+    }
+
+    .scene-art::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(5, 7, 13, 0.02), rgba(5, 7, 13, 0.72)),
+        radial-gradient(circle at 50% 35%, transparent 0 28%, rgba(0, 0, 0, 0.42) 76%);
+      pointer-events: none;
+    }
+
+    .scene-art figcaption {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      z-index: 1;
+      color: var(--ink);
+      font: 700 0.76rem/1.3 Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .art-badge {
+      color: var(--gold);
+    }
+
+    .scene-copy {
+      display: grid;
+      align-content: space-between;
+      min-width: 0;
     }
 
     .scene-label {
@@ -185,6 +260,24 @@
       margin: 14px 0 0;
       color: var(--muted);
       font: 0.98rem/1.55 Arial, Helvetica, sans-serif;
+    }
+
+    .evidence-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .evidence-dot {
+      min-height: 6px;
+      border: 1px solid rgba(216, 193, 122, 0.3);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .evidence-dot.filled {
+      background: linear-gradient(90deg, rgba(216, 193, 122, 0.72), rgba(255, 255, 255, 0.38));
+      box-shadow: 0 0 18px rgba(216, 193, 122, 0.22);
     }
 
     .status-panel {
@@ -247,6 +340,11 @@
     .game-actions .wide { grid-column: 1 / -1; }
     .game-actions .heaven { border-color: rgba(141, 191, 145, 0.72); }
     .game-actions .hell { border-color: rgba(180, 71, 71, 0.72); }
+    .game-actions .judge {
+      min-height: 58px;
+      font-size: 1rem;
+      background: linear-gradient(90deg, rgba(180, 71, 71, 0.28), rgba(141, 191, 145, 0.22));
+    }
 
     .details {
       border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -290,8 +388,25 @@
         grid-template-columns: 1fr;
       }
 
+      .game-panel {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .scene-art, .scene-art img {
+        min-height: 330px;
+      }
+
       .menu {
         width: min(360px, 100%);
+      }
+
+      .title-art-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .title-art-strip img {
+        height: 112px;
       }
 
       .game-actions {
@@ -311,6 +426,11 @@
         <div>
           <h1>The Taker</h1>
           <p class="tagline">Nine ghosts. One little Judge. A soft-horror point-and-click prototype about evidence, mercy, punishment, and the weight of forever.</p>
+          <div class="title-art-strip" aria-label="GDD concept art preview">
+            <img src="Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_07_27d1f9d939.png" alt="Fanto concept art">
+            <img src="Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_03_128cf8c798.png" alt="Judgement concept art">
+            <img src="Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_02_452b19af8b.png" alt="Evil tree concept art">
+          </div>
         </div>
 
         <nav class="menu" aria-label="Prototype menu">
@@ -326,14 +446,25 @@
     <section id="game-screen" class="screen hidden" aria-label="The Taker browser prototype">
       <div class="game-stage">
         <article class="game-panel">
-          <div>
-            <p id="scene-label" class="scene-label">Graveyard</p>
-            <h2 id="ghost-name" class="ghost-name">The Innocent</h2>
-            <p id="story" class="story"></p>
-            <p id="substory" class="substory"></p>
-          </div>
+          <figure class="scene-art">
+            <img id="scene-art" src="Assets/Game/Rooms/Title/Sprites/Back_0.png" alt="Current scene concept art">
+            <figcaption>
+              <span id="art-badge" class="art-badge">Prototype art</span>
+              <span id="art-caption">The Taker</span>
+            </figcaption>
+          </figure>
 
-          <div id="game-actions" class="game-actions"></div>
+          <div class="scene-copy">
+            <div>
+              <p id="scene-label" class="scene-label">Graveyard</p>
+              <h2 id="ghost-name" class="ghost-name">The Innocent</h2>
+              <p id="story" class="story"></p>
+              <p id="substory" class="substory"></p>
+              <div id="evidence-strip" class="evidence-strip" aria-label="Evidence gathered"></div>
+            </div>
+
+            <div id="game-actions" class="game-actions"></div>
+          </div>
         </article>
 
         <aside class="status-panel">
@@ -375,6 +506,17 @@
   <script>
     const saveKey = "the-taker-pages-save-v1";
     const voiceKey = "the-taker-pages-voice-v1";
+    const art = {
+      title: "Assets/Game/Rooms/Title/Sprites/Back_0.png",
+      fanto: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_07_27d1f9d939.png",
+      judgement: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_03_128cf8c798.png",
+      guilty: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_01_fe6341e49d.png",
+      evil: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_02_452b19af8b.png",
+      valentine: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_05_4b1567dd0d.png",
+      faceless: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_06_96afad1cf6.png",
+      crypt: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_04_d45b2479a2.png",
+      forest: "Assets/Game/Rooms/Forest/Sprites/Back_0.png"
+    };
     const instructionText = [
       "How to play The Taker.",
       "You play as Fanto, a small Judge who must decide where each ghost belongs.",
@@ -389,6 +531,8 @@
       {
         name: "The Innocent",
         scene: "The graveyard",
+        art: art.fanto,
+        badge: "First sentence",
         encounter: "A shy ghost slips between the graves. His whole life looks ordinary until one memory refuses to fade.",
         evidence: ["He abandoned his dog in the snow.", "The rest of his life was mediocre, quiet, and almost harmless.", "He cannot find Heaven because one small cruelty still follows him."],
         doubt: "Can a single brutal act outweigh an otherwise ordinary life?"
@@ -396,6 +540,8 @@
       {
         name: "The Everlasting Valentine",
         scene: "The graveyard",
+        art: art.valentine,
+        badge: "Grief made sharp",
         encounter: "A bride with black hair sobs beside a broken stone. The sobbing turns sharp when Fanto steps closer.",
         evidence: ["She killed four women who got close to her husband.", "Her love became possession.", "No one remembers where her husband went."],
         doubt: "Love explains the wound, but it does not erase the bodies."
@@ -403,6 +549,8 @@
       {
         name: "The Poltergeist",
         scene: "The abandoned house",
+        art: art.crypt,
+        badge: "Rooms that remember",
         encounter: "Candles gutter, doors slam, and a little laugh moves through the walls.",
         evidence: ["The invisible ghost killed seventeen people while playing.", "The ghost is a lonely child.", "She never understood that her games ended lives."],
         doubt: "Is she a murderer, or a child trapped inside a death she cannot understand?"
@@ -410,6 +558,8 @@
       {
         name: "The Doppelganger",
         scene: "The mirrored graveyard",
+        art: art.forest,
+        badge: "False reflection",
         encounter: "Another Fanto copies every step a little too late. The graves have changed places.",
         evidence: ["It has caused confusion, not true harm.", "It enjoys riddles and mischief.", "It can still be condemned if the Judge stops caring."],
         doubt: "A harmless soul can still be ruined by a careless sentence."
@@ -417,6 +567,8 @@
       {
         name: "The Faceless Lady",
         scene: "The forest",
+        art: art.faceless,
+        badge: "The chase",
         encounter: "A white dress hangs between the trees. Her arms are too long. Her face is missing.",
         evidence: ["Her children were kidnapped and killed.", "She killed thirty-nine innocents while seeking revenge.", "Grief and madness hollowed her out."],
         doubt: "How much guilt remains when grief has eaten the mind?"
@@ -424,6 +576,8 @@
       {
         name: "The Forgotten",
         scene: "The crypt",
+        art: art.crypt,
+        badge: "Ancient record",
         encounter: "A faint shadow waits beside a tomb older than prayer. It barely remembers being a person.",
         evidence: ["No one remembers his name.", "His good and bad actions are almost gone.", "Ancient crimes still surface in broken fragments."],
         doubt: "Can forgotten crimes still deserve eternal punishment?"
@@ -431,6 +585,8 @@
       {
         name: "The Guilty",
         scene: "The torture engine",
+        art: art.guilty,
+        badge: "Irredeemable scale",
         encounter: "Chains pull a colossal wraith upright. Lesser souls scream from the iron around him.",
         evidence: ["He ordered millions into death.", "He believed cruelty could build a better world.", "His suffering explains him, but does not excuse him."],
         doubt: "Some crimes make mercy feel impossible."
@@ -438,6 +594,8 @@
       {
         name: "The Evil",
         scene: "The forest",
+        art: art.evil,
+        badge: "Rooted malice",
         encounter: "A sleeping demon face in a twisted tree opens one amber eye.",
         evidence: ["He sacrificed children for power.", "Demons still guard his name.", "His victims may connect to the Faceless Lady."],
         doubt: "Evil can be smaller in number and still feel absolute."
@@ -445,6 +603,8 @@
       {
         name: "Seelvia",
         scene: "The graveyard",
+        art: art.valentine,
+        badge: "The personal case",
         encounter: "A blonde ghost smiles like memory. Fanto wants her saved before he wants her judged.",
         evidence: ["Her truth is personal.", "Fanto became a Judge to find her.", "Love makes the final sentence less honest."],
         doubt: "The hardest judgement is the one Fanto wants to avoid."
@@ -459,8 +619,12 @@
     const menuNote = document.querySelector("#menu-note");
     const sceneLabel = document.querySelector("#scene-label");
     const ghostName = document.querySelector("#ghost-name");
+    const sceneArt = document.querySelector("#scene-art");
+    const artBadge = document.querySelector("#art-badge");
+    const artCaption = document.querySelector("#art-caption");
     const story = document.querySelector("#story");
     const substory = document.querySelector("#substory");
+    const evidenceStrip = document.querySelector("#evidence-strip");
     const gameActions = document.querySelector("#game-actions");
     const progressMeter = document.querySelector("#progress-meter");
     const evidenceMeter = document.querySelector("#evidence-meter");
@@ -517,17 +681,35 @@
       render();
     }
 
-    function button(label, action, className = "") {
+    function button(label, action, className = "", disabled = false) {
       const item = document.createElement("button");
       item.type = "button";
       item.textContent = label;
       item.className = className;
-      item.addEventListener("click", action);
+      item.disabled = disabled;
+      if (!disabled) item.addEventListener("click", action);
       return item;
     }
 
     function setActions(actions) {
       gameActions.replaceChildren(...actions);
+    }
+
+    function setVisual(image, badge, caption) {
+      sceneArt.src = image;
+      sceneArt.alt = caption;
+      artBadge.textContent = badge;
+      artCaption.textContent = caption;
+      gameScreen.style.setProperty("--scene-image", `url("${image}")`);
+    }
+
+    function updateEvidenceStrip() {
+      const dots = [0, 1, 2].map(index => {
+        const dot = document.createElement("span");
+        dot.className = `evidence-dot${state.evidence > index ? " filled" : ""}`;
+        return dot;
+      });
+      evidenceStrip.replaceChildren(...dots);
     }
 
     function supportsNarration() {
@@ -597,7 +779,7 @@
 
     function collectEvidence() {
       state.evidence = Math.min(3, state.evidence + 1);
-      state.phase = "evidence";
+      state.phase = state.evidence >= 3 ? "judgement" : "evidence";
       saveState();
       render();
     }
@@ -654,8 +836,10 @@
     function render() {
       updateMeters();
       updateVoiceControls();
+      updateEvidenceStrip();
 
       if (state.phase === "instructions") {
+        setVisual(art.fanto, "Little judge", "Fanto, the player character");
         sceneLabel.textContent = "New game instructions";
         ghostName.textContent = "How To Play";
         story.textContent = instructionText;
@@ -674,6 +858,7 @@
       }
 
       if (state.phase === "self") {
+        setVisual(art.judgement, "Final sentence", "The judge must judge himself");
         sceneLabel.textContent = "The last pending judgement";
         ghostName.textContent = "Fanto";
         story.textContent = `The Archangel turns his scythe toward the little Judge. ${state.hell} souls were sent to Hell.`;
@@ -687,6 +872,7 @@
       }
 
       if (state.phase === "ending") {
+        setVisual(art.judgement, "Ending unlocked", "The scales fall silent");
         sceneLabel.textContent = "Ending unlocked";
         ghostName.textContent = endingName();
         story.textContent = "The judgement is complete. The prototype has saved this run in your browser.";
@@ -700,8 +886,21 @@
       }
 
       const ghost = currentGhost();
+      setVisual(ghost.art || art.forest, ghost.badge || "Case file", ghost.name);
       sceneLabel.textContent = ghost.scene;
       ghostName.textContent = ghost.name;
+
+      if (state.phase === "judgement") {
+        setVisual(art.judgement, "Judgement mirror", `${ghost.name}: decide`);
+        story.textContent = "The well becomes a mirror. The scales lift from the dark and wait for Fanto's sentence.";
+        substory.textContent = `${ghost.doubt} You have gathered all three pieces of evidence.`;
+        setActions([
+          button("Damnation", () => judge("Hell"), "hell judge"),
+          button("Salvation", () => judge("Heaven"), "heaven judge")
+        ]);
+        speak(`${ghost.name}. ${story.textContent} ${substory.textContent}`, `judgement-${state.ghostIndex}`);
+        return;
+      }
 
       if (state.phase === "evidence") {
         const evidence = ghost.evidence[Math.max(0, state.evidence - 1)];
@@ -722,8 +921,11 @@
       setActions([
         button("Search", collectEvidence),
         button("Find Doll", meetDoll),
-        button("Heaven", () => judge("Heaven"), "heaven"),
-        button("Hell", () => judge("Hell"), "hell")
+        button(state.evidence >= 3 ? "Open Judgement" : "Gather 3 Evidence", () => {
+          state.phase = "judgement";
+          saveState();
+          render();
+        }, state.evidence >= 3 ? "wide judge" : "wide", state.evidence < 3)
       ]);
     }
 
