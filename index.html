@@ -216,6 +216,27 @@
       padding-right: 4px;
     }
 
+    .utility-actions {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .utility-actions button {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid rgba(216, 193, 122, 0.3);
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--ink);
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .utility-actions button:hover {
+      border-color: var(--gold);
+      background: rgba(91, 72, 32, 0.34);
+    }
+
     .game-actions {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -324,6 +345,11 @@
             <div id="doll-meter">Doll 0 / 9</div>
           </div>
           <div id="judgement-log" class="judgement-log"></div>
+          <div class="utility-actions">
+            <button id="voice-toggle" type="button">Narrator Off</button>
+            <button id="how-to-play" type="button">How To Play</button>
+          </div>
+          <p id="voice-note" class="note">Narration uses your browser voice and starts only after you turn it on.</p>
         </aside>
       </div>
     </section>
@@ -348,6 +374,16 @@
 
   <script>
     const saveKey = "the-taker-pages-save-v1";
+    const voiceKey = "the-taker-pages-voice-v1";
+    const instructionText = [
+      "How to play The Taker.",
+      "You play as Fanto, a small Judge who must decide where each ghost belongs.",
+      "Use Search to gather up to three pieces of evidence before you judge.",
+      "Find Doll to record an optional encounter that can change the ending.",
+      "Choose Heaven when you believe the soul deserves mercy, or Hell when you believe the soul must be condemned.",
+      "Your progress saves automatically in this browser. Continue brings back the current run.",
+      "The panel on the right shows which ghost you are judging, how much evidence you have, how many souls went to Hell, whether Doll appeared, and your judgement log."
+    ].join(" ");
 
     const ghosts = [
       {
@@ -431,8 +467,13 @@
     const hellMeter = document.querySelector("#hell-meter");
     const dollMeter = document.querySelector("#doll-meter");
     const judgementLog = document.querySelector("#judgement-log");
+    const voiceToggle = document.querySelector("#voice-toggle");
+    const howToPlay = document.querySelector("#how-to-play");
+    const voiceNote = document.querySelector("#voice-note");
 
     let state = createNewState();
+    let narratorEnabled = localStorage.getItem(voiceKey) === "on";
+    let lastNarrationKey = "";
 
     function createNewState() {
       return {
@@ -440,7 +481,8 @@
         evidence: 0,
         doll: 0,
         hell: 0,
-        phase: "encounter",
+        phase: "instructions",
+        returnPhase: "",
         judgements: [],
         selfJudgement: null
       };
@@ -456,6 +498,7 @@
       if (!raw) return false;
       try {
         state = Object.assign(createNewState(), JSON.parse(raw));
+        state.returnPhase = state.returnPhase || "";
         return true;
       } catch {
         localStorage.removeItem(saveKey);
@@ -487,6 +530,49 @@
       gameActions.replaceChildren(...actions);
     }
 
+    function supportsNarration() {
+      return "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    }
+
+    function updateVoiceControls() {
+      voiceToggle.textContent = narratorEnabled ? "Narrator On" : "Narrator Off";
+      voiceNote.textContent = supportsNarration()
+        ? "Narration uses your browser voice and starts only after you turn it on."
+        : "This browser does not expose a built-in narration voice.";
+    }
+
+    function speak(text, key) {
+      if (!narratorEnabled || !supportsNarration() || lastNarrationKey === key) return;
+      lastNarrationKey = key;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 0.86;
+      utterance.volume = 0.9;
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice => /english|en-/i.test(`${voice.lang} ${voice.name}`));
+      if (preferredVoice) utterance.voice = preferredVoice;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopNarration() {
+      if (supportsNarration()) window.speechSynthesis.cancel();
+    }
+
+    function showInstructions(returnPhase = "") {
+      state.returnPhase = returnPhase;
+      state.phase = "instructions";
+      saveState();
+      render();
+    }
+
+    function leaveInstructions() {
+      state.phase = state.returnPhase || "encounter";
+      state.returnPhase = "";
+      saveState();
+      render();
+    }
+
     function currentGhost() {
       return ghosts[Math.min(state.ghostIndex, ghosts.length - 1)];
     }
@@ -511,6 +597,7 @@
       state.judgements.push({ name: ghost.name, destination });
       state.ghostIndex += 1;
       state.evidence = 0;
+      state.returnPhase = "";
       state.phase = state.ghostIndex >= ghosts.length ? "self" : "encounter";
       saveState();
       render();
@@ -548,12 +635,32 @@
 
     function render() {
       updateMeters();
+      updateVoiceControls();
+
+      if (state.phase === "instructions") {
+        sceneLabel.textContent = "New game instructions";
+        ghostName.textContent = "How To Play";
+        story.textContent = instructionText;
+        substory.textContent = narratorEnabled
+          ? "The narrator is reading these instructions. You can turn narration off from the right panel."
+          : "Turn Narrator On from the right panel if you want these instructions read aloud.";
+        speak(instructionText, `instructions-${state.ghostIndex}-${state.returnPhase || "new"}`);
+        setActions([
+          button(state.returnPhase ? "Return To Run" : "Start Judgement", leaveInstructions, "wide"),
+          button("Narrate Again", () => {
+            lastNarrationKey = "";
+            speak(instructionText, `instructions-repeat-${Date.now()}`);
+          }, "wide")
+        ]);
+        return;
+      }
 
       if (state.phase === "self") {
         sceneLabel.textContent = "The last pending judgement";
         ghostName.textContent = "Fanto";
         story.textContent = `The Archangel turns his scythe toward the little Judge. ${state.hell} souls were sent to Hell.`;
         substory.textContent = "Now Fanto must judge himself: salvation, or damnation.";
+        speak(`${story.textContent} ${substory.textContent}`, "self-judgement");
         setActions([
           button("Salvation", () => judgeSelf("Heaven"), "heaven"),
           button("Damnation", () => judgeSelf("Hell"), "hell")
@@ -566,6 +673,7 @@
         ghostName.textContent = endingName();
         story.textContent = "The judgement is complete. The prototype has saved this run in your browser.";
         substory.textContent = "Start again to test another moral path, or open the Unity project source for the full build.";
+        speak(`${ghostName.textContent}. ${story.textContent}`, `ending-${ghostName.textContent}`);
         setActions([
           button("New Game", () => { state = createNewState(); saveState(); render(); }, "wide"),
           button("Source", () => { window.location.href = "https://github.com/joseprendergast/The-Taker"; }, "wide")
@@ -591,6 +699,8 @@
         substory.textContent = ghost.doubt;
       }
 
+      speak(`${ghost.name}. ${story.textContent} ${substory.textContent}`, `${state.phase}-${state.ghostIndex}-${state.evidence}-${state.doll}`);
+
       setActions([
         button("Search", collectEvidence),
         button("Find Doll", meetDoll),
@@ -609,6 +719,7 @@
 
     newGame.addEventListener("click", () => {
       state = createNewState();
+      lastNarrationKey = "";
       saveState();
       showGame();
     });
@@ -617,6 +728,22 @@
       if (loadState()) showGame();
     });
 
+    voiceToggle.addEventListener("click", () => {
+      narratorEnabled = !narratorEnabled;
+      localStorage.setItem(voiceKey, narratorEnabled ? "on" : "off");
+      lastNarrationKey = "";
+      if (!narratorEnabled) stopNarration();
+      updateVoiceControls();
+      render();
+    });
+
+    howToPlay.addEventListener("click", () => {
+      const returnPhase = state.phase === "instructions" ? state.returnPhase : state.phase;
+      lastNarrationKey = "";
+      showInstructions(returnPhase || "encounter");
+    });
+
+    updateVoiceControls();
     updateContinueButton();
   </script>
 </body>

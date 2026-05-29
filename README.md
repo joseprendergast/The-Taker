@@ -28,8 +28,12 @@ The current goal is to prove the core structure:
 - PowerQuest is imported under `Assets/PowerQuest`.
 - The PowerQuest default template is installed under `Assets/Game`.
 - The demo has been rethemed into a playable narrative prototype for Fanto.
+- A reusable, story-neutral Unity adventure foundation has been added under `Assets/Game/Scripts`.
+- The foundation compiles without PowerQuest and detects PowerQuest later through `GamePowerQuestBridge`.
 - Concept art has been extracted from the supplied GDD into `Assets/Game/ConceptArt/ExtractedFromGDD`.
 - The GitHub Pages site now runs a lightweight browser prototype with `PRESS START`, `NEW GAME`, `CONTINUE`, ghost judgments, endings, and browser-local saves.
+- Every new browser run starts with clear how-to-play instructions before the first ghost.
+- The Pages prototype includes a browser-native narrator toggle for the instructions and story beats.
 - The prototype covers all nine ghosts from the GDD.
 - Each ghost has an explore/evidence/confront/judge loop.
 - Heaven/Hell choices are tracked.
@@ -81,16 +85,47 @@ Open this folder in Unity Hub as a Unity project:
 
 Recommended editor family: Unity 2022 LTS or newer. If Unity asks to upgrade metadata, allow it.
 
+## Reusable technical foundation
+
+The reusable architecture is documented here:
+
+`docs/technical-foundation.md`
+
+Main editor entry point:
+
+`Game Foundation` -> `Bootstrap` -> `Run Full Bootstrap`
+
+Main runtime namespace:
+
+`GameFoundation`
+
+The foundation includes neutral systems for scene definitions, contextual hotspots, subtitles, browser-safe saves, inventory/case files, compact cinematic UI, atmosphere hooks, debug tools, optional battle overlay, and a reflection-based PowerQuest bridge.
+
 ## How to play the prototype
 
 - Start from `Assets/Game/Rooms/Title/SceneRoomTitle.unity`.
 - Click `PRESS START`.
 - Click `NEW GAME`, or `CONTINUE` if a save exists.
+- New games first show a how-to-play screen. Read it, then choose `START JUDGEMENT`.
+- In the Pages prototype, use `NARRATOR ON` if you want the browser to read instructions and story text aloud.
 - Left click to walk or interact.
 - Right click to inspect.
 - Click the forest/hotspots to gather evidence and context.
 - Click the well to confront and judge the current ghost.
 - Use the sky/status hotspot to view progress or the unlocked ending.
+
+## Narration and voice
+
+The browser prototype uses the built-in Web Speech API for quick narration. It does not send text to OpenAI and does not need an API key.
+
+For the Unity game, `Assets/Game/Scripts/GameNarration.cs` provides the production path:
+
+- Use pre-generated narrator clips for GitHub Pages/WebGL whenever possible.
+- Keep narration optional and user-triggered so browser audio rules are respected.
+- Store OpenAI-generated files as imported audio assets, or call OpenAI through a private server/proxy.
+- Never put an OpenAI API key inside `index.html`, Unity WebGL code, or any public GitHub Pages file.
+
+OpenAI Whisper is for speech-to-text. For a narrator voice, use OpenAI text-to-speech instead, then import the generated audio into Unity or serve it through a secure backend.
 
 ## Desktop build
 
@@ -145,7 +180,7 @@ GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project s
 2. Install WebGL Build Support for the selected Unity version if needed.
 3. Switch platform to `WebGL` in Unity Build Settings.
 4. Use `The Taker` -> `Build WebGL` -> `GitHub Pages`.
-5. Deploy the generated `Builds/Pages` folder through GitHub Pages.
+5. Deploy the generated `Builds/WebGL` folder through GitHub Pages, or use `Game Foundation` -> `WebGL` -> `Build WebGL and Copy to Docs`.
 
 Recommended Pages setup for this repo:
 

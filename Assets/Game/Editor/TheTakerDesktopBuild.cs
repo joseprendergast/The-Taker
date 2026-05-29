@@ -24,7 +24,7 @@ public static class TheTakerDesktopBuild
 	[MenuItem("The Taker/Build WebGL/GitHub Pages")]
 	public static void BuildWebGLForPages()
 	{
-		Build("Builds/Pages", BuildTarget.WebGL);
+		Build("Builds/WebGL", BuildTarget.WebGL);
 	}
 
 	public static void BuildForPages()
