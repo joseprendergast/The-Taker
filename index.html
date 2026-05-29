@@ -831,9 +831,8 @@
 
     function isAllowedVoice(voice) {
       const label = `${voice.name} ${voice.lang}`.toLowerCase();
-      const isSpanish = /^es([-_]|$)/.test(voice.lang.toLowerCase()) || /spanish|español|espanol/.test(label);
       const isGoogleUkEnglish = /google.*uk.*english/.test(label) || /google uk english/.test(label);
-      return isSpanish || isGoogleUkEnglish;
+      return isGoogleUkEnglish;
     }
 
     function populateVoiceSelector() {
