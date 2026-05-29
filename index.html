@@ -315,12 +315,38 @@
       margin-top: 14px;
     }
 
+    .voice-picker {
+      display: grid;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .voice-picker label {
+      color: var(--gold);
+      font: 700 0.76rem/1.3 Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .voice-picker select,
     .utility-actions button {
       width: 100%;
       min-height: 38px;
       border: 1px solid rgba(216, 193, 122, 0.3);
       background: rgba(255, 255, 255, 0.045);
       color: var(--ink);
+    }
+
+    .voice-picker select {
+      padding: 0 10px;
+      font: 700 0.82rem Arial, Helvetica, sans-serif;
+    }
+
+    .voice-picker option {
+      color: #10131a;
+    }
+
+    .utility-actions button {
       text-transform: uppercase;
       cursor: pointer;
     }
@@ -480,6 +506,15 @@
             <button id="voice-toggle" type="button">Narrator Off</button>
             <button id="how-to-play" type="button">How To Play</button>
           </div>
+          <div class="voice-picker">
+            <label for="voice-select">Voice</label>
+            <select id="voice-select">
+              <option value="auto">Recommended voice</option>
+            </select>
+          </div>
+          <div class="utility-actions">
+            <button id="test-voice" type="button">Test Voice</button>
+          </div>
           <p id="voice-note" class="note">Narration prefers a low British male browser voice when available.</p>
         </aside>
       </div>
@@ -506,6 +541,7 @@
   <script>
     const saveKey = "the-taker-pages-save-v1";
     const voiceKey = "the-taker-pages-voice-v1";
+    const voiceChoiceKey = "the-taker-pages-voice-choice-v1";
     const art = {
       title: "Assets/Game/Rooms/Title/Sprites/Back_0.png",
       fanto: "Assets/Game/ConceptArt/ExtractedFromGDD/gdd_page_01_image_07_27d1f9d939.png",
@@ -632,11 +668,14 @@
     const dollMeter = document.querySelector("#doll-meter");
     const judgementLog = document.querySelector("#judgement-log");
     const voiceToggle = document.querySelector("#voice-toggle");
+    const voiceSelect = document.querySelector("#voice-select");
+    const testVoice = document.querySelector("#test-voice");
     const howToPlay = document.querySelector("#how-to-play");
     const voiceNote = document.querySelector("#voice-note");
 
     let state = createNewState();
     let narratorEnabled = localStorage.getItem(voiceKey) === "on";
+    let selectedVoiceKey = localStorage.getItem(voiceChoiceKey) || "auto";
     let lastNarrationKey = "";
 
     function createNewState() {
@@ -718,13 +757,54 @@
 
     function updateVoiceControls() {
       voiceToggle.textContent = narratorEnabled ? "Narrator On" : "Narrator Off";
-      voiceNote.textContent = supportsNarration()
-        ? "Narration prefers a low British male browser voice when available."
-        : "This browser does not expose a built-in narration voice.";
+      if (!supportsNarration()) {
+        voiceNote.textContent = "This browser does not expose a built-in narration voice.";
+        voiceSelect.disabled = true;
+        testVoice.disabled = true;
+        return;
+      }
+
+      const voiceCount = window.speechSynthesis.getVoices().length;
+      const voiceName = voiceSelect.selectedOptions[0]?.textContent || "Recommended voice";
+      voiceSelect.disabled = voiceCount === 0;
+      testVoice.disabled = voiceCount === 0;
+      voiceNote.textContent = voiceCount
+        ? `Selected: ${voiceName}. These are browser/device voices.`
+        : "Loading browser voices. If none appear, try Safari or Chrome on desktop.";
+    }
+
+    function voiceKeyFor(voice) {
+      return `${voice.voiceURI}|||${voice.name}|||${voice.lang}`;
+    }
+
+    function populateVoiceSelector() {
+      if (!supportsNarration()) {
+        updateVoiceControls();
+        return;
+      }
+
+      const voices = window.speechSynthesis.getVoices()
+        .slice()
+        .sort((a, b) => `${a.lang} ${a.name}`.localeCompare(`${b.lang} ${b.name}`));
+      const options = [
+        new Option("Recommended voice", "auto"),
+        ...voices.map(voice => new Option(`${voice.name} (${voice.lang})`, voiceKeyFor(voice)))
+      ];
+
+      voiceSelect.replaceChildren(...options);
+      const hasSavedVoice = options.some(option => option.value === selectedVoiceKey);
+      voiceSelect.value = hasSavedVoice ? selectedVoiceKey : "auto";
+      if (!hasSavedVoice) selectedVoiceKey = "auto";
+      updateVoiceControls();
     }
 
     function chooseNarratorVoice() {
       const voices = window.speechSynthesis.getVoices();
+      if (selectedVoiceKey !== "auto") {
+        const selected = voices.find(voice => voiceKeyFor(voice) === selectedVoiceKey);
+        if (selected) return selected;
+      }
+
       const scored = voices
         .map(voice => {
           const label = `${voice.name} ${voice.lang}`.toLowerCase();
@@ -753,6 +833,14 @@
       const preferredVoice = chooseNarratorVoice();
       if (preferredVoice) utterance.voice = preferredVoice;
       window.speechSynthesis.speak(utterance);
+    }
+
+    function previewSelectedVoice() {
+      narratorEnabled = true;
+      localStorage.setItem(voiceKey, "on");
+      lastNarrationKey = "";
+      updateVoiceControls();
+      speak("Now, little judge... decide. Salvation, or damnation.", `voice-preview-${Date.now()}`);
     }
 
     function stopNarration() {
@@ -957,11 +1045,26 @@
       render();
     });
 
+    voiceSelect.addEventListener("change", () => {
+      selectedVoiceKey = voiceSelect.value || "auto";
+      localStorage.setItem(voiceChoiceKey, selectedVoiceKey);
+      lastNarrationKey = "";
+      stopNarration();
+      updateVoiceControls();
+    });
+
+    testVoice.addEventListener("click", previewSelectedVoice);
+
     howToPlay.addEventListener("click", () => {
       const returnPhase = state.phase === "instructions" ? state.returnPhase : state.phase;
       lastNarrationKey = "";
       showInstructions(returnPhase || "encounter");
     });
+
+    if (supportsNarration()) {
+      window.speechSynthesis.addEventListener("voiceschanged", populateVoiceSelector);
+      populateVoiceSelector();
+    }
 
     updateVoiceControls();
     updateContinueButton();
