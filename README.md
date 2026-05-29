@@ -109,7 +109,7 @@ The foundation includes neutral systems for scene definitions, contextual hotspo
 - Click `NEW GAME`, or `CONTINUE` if a save exists.
 - New games first show a how-to-play screen. Read it, then choose `START JUDGEMENT`.
 - In the Pages prototype, use `NARRATOR ON` if you want the browser to read instructions and story text aloud.
-- Use the `VOICE` selector in the run panel to test any browser/device voice available on your machine.
+- Use the `VOICE` selector in the run panel to test any browser/device voice available on your machine. The default recommendation tries `Google UK English Male` first when the browser provides it.
 - Click `TEST VOICE` to preview the selected narrator with a judgement line.
 - Left click to walk or interact.
 - Right click to inspect.
@@ -119,7 +119,7 @@ The foundation includes neutral systems for scene definitions, contextual hotspo
 
 ## Narration and voice
 
-The browser prototype uses the built-in Web Speech API for quick narration. It does not send text to OpenAI and does not need an API key. The `VOICE` selector lists whatever voices the current browser/device exposes, saves the selected voice, and includes a `TEST VOICE` preview button. Different machines and browsers may show different voices.
+The browser prototype uses the built-in Web Speech API for quick narration. It does not send text to OpenAI and does not need an API key. The `VOICE` selector lists whatever voices the current browser/device exposes, saves the selected voice, and includes a `TEST VOICE` preview button. The default voice target is `Google UK English Male` at 1.5x speed, with a recommended fallback when that exact voice is unavailable. Different machines and browsers may show different voices.
 
 For the Unity game, `Assets/Game/Scripts/GameNarration.cs` provides the production path:
 

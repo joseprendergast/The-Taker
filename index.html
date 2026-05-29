@@ -22,10 +22,11 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100svh;
       background: #05070d;
       color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
+      overflow-x: hidden;
     }
 
     button, a {
@@ -34,12 +35,12 @@
     }
 
     .screen {
-      min-height: 100vh;
+      height: 100svh;
       position: relative;
       display: grid;
       place-items: center;
       overflow: hidden;
-      padding: 32px 18px;
+      padding: 18px;
       isolation: isolate;
     }
 
@@ -93,7 +94,7 @@
 
     .title-art-strip {
       width: min(620px, 100%);
-      margin-top: 24px;
+      margin-top: 16px;
       display: grid;
       grid-template-columns: 0.7fr 1.4fr 0.9fr;
       gap: 10px;
@@ -101,7 +102,7 @@
 
     .title-art-strip img {
       width: 100%;
-      height: 156px;
+      height: clamp(96px, 18svh, 140px);
       object-fit: cover;
       border: 1px solid rgba(216, 193, 122, 0.36);
       filter: saturate(0.82) contrast(1.08) brightness(0.82);
@@ -161,6 +162,7 @@
 
     .game-stage {
       width: min(1180px, 100%);
+      height: min(620px, calc(100svh - 36px));
       display: grid;
       grid-template-columns: minmax(0, 1fr) 300px;
       gap: 18px;
@@ -168,7 +170,8 @@
     }
 
     .game-panel {
-      min-height: 560px;
+      min-height: 0;
+      height: 100%;
       padding: 22px;
       display: grid;
       grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1fr);
@@ -178,7 +181,8 @@
 
     .scene-art {
       position: relative;
-      min-height: 500px;
+      min-height: 0;
+      height: 100%;
       margin: 0;
       overflow: hidden;
       border: 1px solid rgba(216, 193, 122, 0.42);
@@ -189,7 +193,6 @@
     .scene-art img {
       width: 100%;
       height: 100%;
-      min-height: 500px;
       display: block;
       object-fit: cover;
       filter: saturate(0.86) contrast(1.08) brightness(0.82);
@@ -250,16 +253,16 @@
     }
 
     .story {
-      margin: 18px 0 0;
+      margin: 14px 0 0;
       color: var(--ink);
-      font-size: clamp(1.05rem, 2vw, 1.28rem);
-      line-height: 1.52;
+      font-size: clamp(1rem, 1.5vw, 1.18rem);
+      line-height: 1.44;
     }
 
     .substory {
-      margin: 14px 0 0;
+      margin: 10px 0 0;
       color: var(--muted);
-      font: 0.98rem/1.55 Arial, Helvetica, sans-serif;
+      font: 0.92rem/1.45 Arial, Helvetica, sans-serif;
     }
 
     .evidence-strip {
@@ -284,6 +287,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.48);
       padding: 16px;
+      overflow: auto;
     }
 
     .status-panel h2 {
@@ -301,10 +305,10 @@
     }
 
     .judgement-log {
-      margin-top: 14px;
+      margin-top: 10px;
       color: var(--muted);
-      font: 0.86rem/1.45 Arial, Helvetica, sans-serif;
-      max-height: 190px;
+      font: 0.82rem/1.35 Arial, Helvetica, sans-serif;
+      max-height: 120px;
       overflow: auto;
       padding-right: 4px;
     }
@@ -312,13 +316,13 @@
     .utility-actions {
       display: grid;
       gap: 8px;
-      margin-top: 14px;
+      margin-top: 10px;
     }
 
     .voice-picker {
       display: grid;
       gap: 6px;
-      margin-top: 14px;
+      margin-top: 10px;
     }
 
     .voice-picker label {
@@ -373,6 +377,7 @@
     }
 
     .details {
+      display: none;
       border-top: 1px solid rgba(255, 255, 255, 0.12);
       background: #05070d;
       padding: 34px 18px 44px;
@@ -417,10 +422,12 @@
       .game-panel {
         grid-template-columns: 1fr;
         min-height: auto;
+        height: auto;
       }
 
       .scene-art, .scene-art img {
         min-height: 330px;
+        height: auto;
       }
 
       .menu {
@@ -787,7 +794,7 @@
         .slice()
         .sort((a, b) => `${a.lang} ${a.name}`.localeCompare(`${b.lang} ${b.name}`));
       const options = [
-        new Option("Recommended voice", "auto"),
+        new Option("Recommended: Google UK English Male", "auto"),
         ...voices.map(voice => new Option(`${voice.name} (${voice.lang})`, voiceKeyFor(voice)))
       ];
 
@@ -805,10 +812,15 @@
         if (selected) return selected;
       }
 
+      const googleUkMale = voices.find(voice => /google uk english male/i.test(`${voice.name} ${voice.lang}`));
+      if (googleUkMale) return googleUkMale;
+
       const scored = voices
         .map(voice => {
           const label = `${voice.name} ${voice.lang}`.toLowerCase();
           let score = 0;
+          if (/google uk english male/.test(label)) score += 200;
+          if (/google.*uk.*english.*male/.test(label)) score += 160;
           if (/en-gb|gb|uk|british|england|english \(united kingdom\)/.test(label)) score += 80;
           if (/male|daniel|george|arthur|oliver|rishi|ryan|thomas|alfie/.test(label)) score += 30;
           if (/deep|dark|low|baritone|onyx|cedar|narrator/.test(label)) score += 18;
@@ -827,7 +839,7 @@
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-GB";
-      utterance.rate = 0.82;
+      utterance.rate = 1.5;
       utterance.pitch = 0.62;
       utterance.volume = 0.9;
       const preferredVoice = chooseNarratorVoice();
