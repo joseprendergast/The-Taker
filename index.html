@@ -276,6 +276,34 @@
       line-height: 1.38;
     }
 
+    .instruction-card {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .instruction-step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 8px 10px;
+      border: 1px solid rgba(216, 193, 122, 0.22);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .instruction-step strong {
+      color: var(--gold);
+      font: 700 0.72rem/1 Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .instruction-step span:last-child {
+      color: var(--ink);
+      font: 700 0.86rem/1.25 Arial, Helvetica, sans-serif;
+    }
+
     .substory {
       margin: 10px 0 0;
       color: var(--muted);
@@ -410,12 +438,8 @@
       font-size: clamp(2rem, 3.1vw, 3rem);
     }
 
-    .screen[data-phase="instructions"] .story {
-      font: 700 clamp(0.95rem, 1.15vw, 1.08rem)/1.35 Arial, Helvetica, sans-serif;
-    }
-
     .screen[data-phase="instructions"] .substory {
-      font-size: 0.82rem;
+      font-size: 0.78rem;
     }
 
     .screen[data-phase="instructions"] .evidence-strip {
@@ -613,6 +637,13 @@
       "Choose Salvation for mercy or Damnation for punishment.",
       "Progress saves automatically in this browser."
     ].join(" ");
+    const instructionSteps = [
+      ["1", "Search each case to uncover three pieces of evidence."],
+      ["2", "Find Doll for optional ending clues."],
+      ["3", "When all three gold marks fill, open Judgement."],
+      ["4", "Choose Salvation for mercy or Damnation for punishment."],
+      ["5", "Your choices change the ending. Progress autosaves."]
+    ];
 
     const ghosts = [
       {
@@ -801,6 +832,23 @@
         return dot;
       });
       evidenceStrip.replaceChildren(...dots);
+    }
+
+    function renderInstructions() {
+      const card = document.createElement("div");
+      card.className = "instruction-card";
+      const steps = instructionSteps.map(([number, text]) => {
+        const step = document.createElement("div");
+        step.className = "instruction-step";
+        const index = document.createElement("strong");
+        index.textContent = number;
+        const copy = document.createElement("span");
+        copy.textContent = text;
+        step.append(index, copy);
+        return step;
+      });
+      card.replaceChildren(...steps);
+      story.replaceChildren(card);
     }
 
     function supportsNarration() {
@@ -997,7 +1045,7 @@
         gameScreen.style.setProperty("--scene-image", `url("${art.title}")`);
         sceneLabel.textContent = "New game instructions";
         ghostName.textContent = "How To Play";
-        story.textContent = instructionText;
+        renderInstructions();
         substory.textContent = narratorEnabled
           ? "The narrator is reading these instructions. You can turn narration off from the right panel."
           : "Turn Narrator On from the right panel if you want these instructions read aloud.";
