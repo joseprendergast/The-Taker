@@ -68,6 +68,12 @@ namespace GameFoundation
 				GameGlobals.Instance.Settings.narratorVoiceId = voiceId;
 		}
 
+		public void SetVoiceDirection(string voiceDirection)
+		{
+			if (GameGlobals.Instance != null)
+				GameGlobals.Instance.Settings.narratorVoiceDirection = voiceDirection;
+		}
+
 		public void Narrate(string lineId, string text, float fallbackHoldSeconds = 3.5f)
 		{
 			if (!CanNarrate(text))

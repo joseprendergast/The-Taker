@@ -116,7 +116,7 @@ The foundation includes neutral systems for scene definitions, contextual hotspo
 
 ## Narration and voice
 
-The browser prototype uses the built-in Web Speech API for quick narration. It does not send text to OpenAI and does not need an API key.
+The browser prototype uses the built-in Web Speech API for quick narration. It does not send text to OpenAI and does not need an API key. When the browser exposes several voices, the prototype prefers a low British male voice and lowers pitch/rate for a darker narrator tone.
 
 For the Unity game, `Assets/Game/Scripts/GameNarration.cs` provides the production path:
 
@@ -125,7 +125,7 @@ For the Unity game, `Assets/Game/Scripts/GameNarration.cs` provides the producti
 - Store OpenAI-generated files as imported audio assets, or call OpenAI through a private server/proxy.
 - Never put an OpenAI API key inside `index.html`, Unity WebGL code, or any public GitHub Pages file.
 
-OpenAI Whisper is for speech-to-text. For a narrator voice, use OpenAI text-to-speech instead, then import the generated audio into Unity or serve it through a secure backend.
+OpenAI Whisper is for speech-to-text. For a narrator voice, use OpenAI text-to-speech instead, then import the generated audio into Unity or serve it through a secure backend. The current future-facing voice id is `onyx` for a darker male tone; `alloy` remains available if we want a more neutral voice later.
 
 ## Desktop build
 

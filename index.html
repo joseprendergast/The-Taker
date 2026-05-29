@@ -349,7 +349,7 @@
             <button id="voice-toggle" type="button">Narrator Off</button>
             <button id="how-to-play" type="button">How To Play</button>
           </div>
-          <p id="voice-note" class="note">Narration uses your browser voice and starts only after you turn it on.</p>
+          <p id="voice-note" class="note">Narration prefers a low British male browser voice when available.</p>
         </aside>
       </div>
     </section>
@@ -537,8 +537,26 @@
     function updateVoiceControls() {
       voiceToggle.textContent = narratorEnabled ? "Narrator On" : "Narrator Off";
       voiceNote.textContent = supportsNarration()
-        ? "Narration uses your browser voice and starts only after you turn it on."
+        ? "Narration prefers a low British male browser voice when available."
         : "This browser does not expose a built-in narration voice.";
+    }
+
+    function chooseNarratorVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      const scored = voices
+        .map(voice => {
+          const label = `${voice.name} ${voice.lang}`.toLowerCase();
+          let score = 0;
+          if (/en-gb|gb|uk|british|england|english \(united kingdom\)/.test(label)) score += 80;
+          if (/male|daniel|george|arthur|oliver|rishi|ryan|thomas|alfie/.test(label)) score += 30;
+          if (/deep|dark|low|baritone|onyx|cedar|narrator/.test(label)) score += 18;
+          if (/english|en-/.test(label)) score += 8;
+          if (/female|samantha|victoria|karen|moira|tessa/.test(label)) score -= 25;
+          return { voice, score };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      return scored.length && scored[0].score > 0 ? scored[0].voice : null;
     }
 
     function speak(text, key) {
@@ -546,11 +564,11 @@
       lastNarrationKey = key;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 0.86;
+      utterance.lang = "en-GB";
+      utterance.rate = 0.82;
+      utterance.pitch = 0.62;
       utterance.volume = 0.9;
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => /english|en-/i.test(`${voice.lang} ${voice.name}`));
+      const preferredVoice = chooseNarratorVoice();
       if (preferredVoice) utterance.voice = preferredVoice;
       window.speechSynthesis.speak(utterance);
     }

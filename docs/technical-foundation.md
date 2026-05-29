@@ -110,8 +110,9 @@ WebGL saves use browser-backed `PlayerPrefs`.
 - It falls back to cinematic subtitles if a clip is missing.
 - It exposes an `ExternalTextToSpeechProxy` mode as an integration point only.
 - It does not include an OpenAI API key, SDK dependency, or direct browser call.
+- It stores a default narrator voice id of `onyx` plus a low, restrained British male voice direction for future generated lines.
 
-For OpenAI narrator voices, generate audio with the text-to-speech API in a private environment, then import the files into `Assets/Game/Audio`, or route requests through a private backend. Whisper is useful for player speech input or transcription later, but it is not the narrator voice system.
+For OpenAI narrator voices, generate audio with the text-to-speech API in a private environment, then import the files into `Assets/Game/Audio`, or route requests through a private backend. `Onyx` is the current target for a darker male narrator; `alloy` is a good neutral fallback. Whisper is useful for player speech input or transcription later, but it is not the narrator voice system.
 
 ## WebGL / Pages
 

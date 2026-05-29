@@ -86,7 +86,8 @@ namespace GameFoundation
 		[Range(0.75f, 2f)] public float subtitleSize = 1f;
 		public bool narrationEnabled = true;
 		[Range(0f, 1f)] public float narrationVolume = 0.9f;
-		public string narratorVoiceId = "marin";
+		public string narratorVoiceId = "onyx";
+		public string narratorVoiceDirection = "Low, restrained British male narrator. Professional, grave, intimate, and cinematic.";
 		public bool crtFilter;
 		public bool integerScaling = true;
 	}
