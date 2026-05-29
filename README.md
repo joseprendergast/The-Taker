@@ -26,6 +26,8 @@ The current goal is to prove the core structure:
 - PowerQuest is imported under `Assets/PowerQuest`.
 - The PowerQuest default template is installed under `Assets/Game`.
 - The demo has been rethemed into a playable narrative prototype for Fanto.
+- Concept art has been extracted from the supplied GDD into `Assets/Game/ConceptArt/ExtractedFromGDD`.
+- The title screen now uses extracted GDD art as a temporary landing screen.
 - The prototype covers all nine ghosts from the GDD.
 - Each ghost has an explore/evidence/confront/judge loop.
 - Heaven/Hell choices are tracked.
@@ -37,14 +39,16 @@ The current goal is to prove the core structure:
 The prototype compresses the GDD into a single playable loop:
 
 1. Start on the title screen.
-2. Enter the graveyard prototype room.
-3. Explore hotspots to gather evidence and moral context.
-4. Use the well as the judgment mirror.
-5. Confront the current ghost.
-6. Send the ghost to Heaven or Hell.
-7. Repeat until all nine ghosts are judged.
-8. Judge Fanto himself.
-9. Unlock the ending that matches the run.
+2. Press start.
+3. Choose `NEW GAME` or `CONTINUE` when saves are available.
+4. Enter the graveyard prototype room.
+5. Explore hotspots to gather evidence and moral context.
+6. Use the well as the judgment mirror.
+7. Confront the current ghost.
+8. Send the ghost to Heaven or Hell.
+9. Repeat until all nine ghosts are judged.
+10. Judge Fanto himself.
+11. Unlock the ending that matches the run.
 
 The nine ghosts currently represented are:
 
@@ -60,7 +64,7 @@ The nine ghosts currently represented are:
 
 ## Current limitations
 
-- The game uses the PowerQuest demo art and room layout as temporary placeholder content.
+- The title screen uses extracted GDD art, but most in-game room/player art is still PowerQuest demo placeholder content.
 - The ghost encounters are narrative/prompt prototypes, not full unique battles or puzzles yet.
 - Fanto, Doll, Seelvia, demons, and custom ghost art still need final sprites and animation.
 - Audio is still placeholder/template audio.
@@ -78,7 +82,8 @@ Recommended editor family: Unity 2022 LTS or newer. If Unity asks to upgrade met
 ## How to play the prototype
 
 - Start from `Assets/Game/Rooms/Title/SceneRoomTitle.unity`.
-- Click `NEW`.
+- Click `PRESS START`.
+- Click `NEW GAME`, or `CONTINUE` if a save exists.
 - Left click to walk or interact.
 - Right click to inspect.
 - Click the forest/hotspots to gather evidence and context.
