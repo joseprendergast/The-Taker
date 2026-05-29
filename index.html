@@ -161,22 +161,24 @@
     }
 
     .game-stage {
-      width: min(1180px, 100%);
-      height: min(620px, calc(100svh - 36px));
+      width: min(1180px, calc(100vw - 48px));
+      height: min(560px, calc(100svh - 48px));
       display: grid;
       grid-template-columns: minmax(0, 1fr) 300px;
-      gap: 18px;
+      gap: 16px;
       align-items: stretch;
+      min-height: 0;
     }
 
     .game-panel {
       min-height: 0;
       height: 100%;
-      padding: 22px;
+      padding: 16px;
       display: grid;
-      grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1fr);
-      gap: 22px;
+      grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr);
+      gap: 16px;
       align-content: space-between;
+      overflow: hidden;
     }
 
     .scene-art {
@@ -197,6 +199,13 @@
       object-fit: cover;
       filter: saturate(0.86) contrast(1.08) brightness(0.82);
       transform: scale(1.02);
+    }
+
+    .scene-art[data-fit="contain"] img {
+      object-fit: contain;
+      padding: 18px;
+      transform: none;
+      background: radial-gradient(circle at 50% 45%, rgba(216, 193, 122, 0.08), rgba(0, 0, 0, 0.76) 70%);
     }
 
     .scene-art::after {
@@ -231,8 +240,16 @@
 
     .scene-copy {
       display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
       align-content: space-between;
       min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .scene-copy > div:first-child {
+      min-height: 0;
+      overflow: hidden;
     }
 
     .scene-label {
@@ -240,13 +257,13 @@
       font: 700 0.82rem Arial, Helvetica, sans-serif;
       text-transform: uppercase;
       letter-spacing: 0;
-      margin: 0 0 14px;
+      margin: 0 0 10px;
     }
 
     .ghost-name {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      font-size: clamp(2rem, 5vw, 4.2rem);
+      font-size: clamp(1.8rem, 3.2vw, 3.35rem);
       line-height: 0.95;
       text-transform: uppercase;
       letter-spacing: 0;
@@ -255,21 +272,21 @@
     .story {
       margin: 14px 0 0;
       color: var(--ink);
-      font-size: clamp(1rem, 1.5vw, 1.18rem);
-      line-height: 1.44;
+      font-size: clamp(0.98rem, 1.25vw, 1.08rem);
+      line-height: 1.38;
     }
 
     .substory {
       margin: 10px 0 0;
       color: var(--muted);
-      font: 0.92rem/1.45 Arial, Helvetica, sans-serif;
+      font: 0.88rem/1.35 Arial, Helvetica, sans-serif;
     }
 
     .evidence-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      margin-top: 18px;
+      margin-top: 12px;
     }
 
     .evidence-dot {
@@ -364,14 +381,14 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 18px;
+      margin-top: 12px;
     }
 
     .game-actions .wide { grid-column: 1 / -1; }
     .game-actions .heaven { border-color: rgba(141, 191, 145, 0.72); }
     .game-actions .hell { border-color: rgba(180, 71, 71, 0.72); }
     .game-actions .judge {
-      min-height: 58px;
+      min-height: 48px;
       font-size: 1rem;
       background: linear-gradient(90deg, rgba(180, 71, 71, 0.28), rgba(141, 191, 145, 0.22));
     }
@@ -561,13 +578,11 @@
       forest: "Assets/Game/Rooms/Forest/Sprites/Back_0.png"
     };
     const instructionText = [
-      "How to play The Taker.",
-      "You play as Fanto, a small Judge who must decide where each ghost belongs.",
-      "Use Search to gather up to three pieces of evidence before you judge.",
-      "Find Doll to record an optional encounter that can change the ending.",
-      "Choose Heaven when you believe the soul deserves mercy, or Hell when you believe the soul must be condemned.",
-      "Your progress saves automatically in this browser. Continue brings back the current run.",
-      "The panel on the right shows which ghost you are judging, how much evidence you have, how many souls went to Hell, whether Doll appeared, and your judgement log."
+      "Search each case to uncover three pieces of evidence.",
+      "Find Doll for optional ending clues.",
+      "When the three gold marks fill, open Judgement.",
+      "Choose Salvation for mercy or Damnation for punishment.",
+      "Progress saves automatically in this browser."
     ].join(" ");
 
     const ghosts = [
@@ -741,9 +756,10 @@
       gameActions.replaceChildren(...actions);
     }
 
-    function setVisual(image, badge, caption) {
+    function setVisual(image, badge, caption, fit = "cover") {
       sceneArt.src = image;
       sceneArt.alt = caption;
+      sceneArt.parentElement.dataset.fit = fit;
       artBadge.textContent = badge;
       artCaption.textContent = caption;
       gameScreen.style.setProperty("--scene-image", `url("${image}")`);
@@ -939,7 +955,8 @@
       updateEvidenceStrip();
 
       if (state.phase === "instructions") {
-        setVisual(art.fanto, "Little judge", "Fanto, the player character");
+        setVisual(art.fanto, "Little judge", "Fanto, the player character", "contain");
+        gameScreen.style.setProperty("--scene-image", `url("${art.title}")`);
         sceneLabel.textContent = "New game instructions";
         ghostName.textContent = "How To Play";
         story.textContent = instructionText;
@@ -948,11 +965,7 @@
           : "Turn Narrator On from the right panel if you want these instructions read aloud.";
         speak(instructionText, `instructions-${state.ghostIndex}-${state.returnPhase || "new"}`);
         setActions([
-          button(state.returnPhase ? "Return To Run" : "Start Judgement", leaveInstructions, "wide"),
-          button("Narrate Again", () => {
-            lastNarrationKey = "";
-            speak(instructionText, `instructions-repeat-${Date.now()}`);
-          }, "wide")
+          button(state.returnPhase ? "Return To Run" : "Start Judgement", leaveInstructions, "wide judge")
         ]);
         return;
       }
