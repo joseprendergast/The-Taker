@@ -816,7 +816,7 @@
         return;
       }
 
-      const voiceCount = window.speechSynthesis.getVoices().length;
+      const voiceCount = voiceSelect.options.length;
       const voiceName = voiceSelect.selectedOptions[0]?.textContent || "Recommended voice";
       voiceSelect.disabled = voiceCount === 0;
       testVoice.disabled = voiceCount === 0;
@@ -829,6 +829,13 @@
       return `${voice.voiceURI}|||${voice.name}|||${voice.lang}`;
     }
 
+    function isAllowedVoice(voice) {
+      const label = `${voice.name} ${voice.lang}`.toLowerCase();
+      const isSpanish = /^es([-_]|$)/.test(voice.lang.toLowerCase()) || /spanish|español|espanol/.test(label);
+      const isGoogleUkEnglish = /google.*uk.*english/.test(label) || /google uk english/.test(label);
+      return isSpanish || isGoogleUkEnglish;
+    }
+
     function populateVoiceSelector() {
       if (!supportsNarration()) {
         updateVoiceControls();
@@ -836,6 +843,7 @@
       }
 
       const voices = window.speechSynthesis.getVoices()
+        .filter(isAllowedVoice)
         .slice()
         .sort((a, b) => `${a.lang} ${a.name}`.localeCompare(`${b.lang} ${b.name}`));
       const options = [
@@ -853,14 +861,15 @@
     function chooseNarratorVoice() {
       const voices = window.speechSynthesis.getVoices();
       if (selectedVoiceKey !== "auto") {
-        const selected = voices.find(voice => voiceKeyFor(voice) === selectedVoiceKey);
+        const selected = voices.find(voice => isAllowedVoice(voice) && voiceKeyFor(voice) === selectedVoiceKey);
         if (selected) return selected;
       }
 
-      const googleUkMale = voices.find(voice => /google uk english male/i.test(`${voice.name} ${voice.lang}`));
+      const allowedVoices = voices.filter(isAllowedVoice);
+      const googleUkMale = allowedVoices.find(voice => /google uk english male/i.test(`${voice.name} ${voice.lang}`));
       if (googleUkMale) return googleUkMale;
 
-      const scored = voices
+      const scored = allowedVoices
         .map(voice => {
           const label = `${voice.name} ${voice.lang}`.toLowerCase();
           let score = 0;
@@ -884,7 +893,7 @@
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-GB";
-      utterance.rate = 1.5;
+      utterance.rate = 1.2;
       utterance.pitch = 0.62;
       utterance.volume = 0.9;
       const preferredVoice = chooseNarratorVoice();
