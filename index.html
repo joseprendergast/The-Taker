@@ -161,11 +161,11 @@
     }
 
     .game-stage {
-      width: min(1180px, calc(100vw - 48px));
-      height: min(560px, calc(100svh - 48px));
+      width: min(1120px, calc(100vw - 40px));
+      height: min(520px, calc(100svh - 40px));
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 300px;
-      gap: 16px;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 14px;
       align-items: stretch;
       min-height: 0;
     }
@@ -173,10 +173,10 @@
     .game-panel {
       min-height: 0;
       height: 100%;
-      padding: 16px;
+      padding: 14px;
       display: grid;
-      grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr);
-      gap: 16px;
+      grid-template-columns: minmax(200px, 0.55fr) minmax(0, 1fr);
+      gap: 14px;
       align-content: space-between;
       overflow: hidden;
     }
@@ -203,7 +203,7 @@
 
     .scene-art[data-fit="contain"] img {
       object-fit: contain;
-      padding: 18px;
+      padding: 10px;
       transform: none;
       background: radial-gradient(circle at 50% 45%, rgba(216, 193, 122, 0.08), rgba(0, 0, 0, 0.76) 70%);
     }
@@ -263,7 +263,7 @@
     .ghost-name {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      font-size: clamp(1.8rem, 3.2vw, 3.35rem);
+      font-size: clamp(1.65rem, 2.8vw, 2.95rem);
       line-height: 0.95;
       text-transform: uppercase;
       letter-spacing: 0;
@@ -303,7 +303,7 @@
     .status-panel {
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.48);
-      padding: 16px;
+      padding: 12px;
       overflow: auto;
     }
 
@@ -318,7 +318,7 @@
       display: grid;
       gap: 10px;
       color: var(--muted);
-      font: 0.92rem/1.4 Arial, Helvetica, sans-serif;
+      font: 0.84rem/1.35 Arial, Helvetica, sans-serif;
     }
 
     .judgement-log {
@@ -352,7 +352,7 @@
     .voice-picker select,
     .utility-actions button {
       width: 100%;
-      min-height: 38px;
+      min-height: 34px;
       border: 1px solid rgba(216, 193, 122, 0.3);
       background: rgba(255, 255, 255, 0.045);
       color: var(--ink);
@@ -388,9 +388,38 @@
     .game-actions .heaven { border-color: rgba(141, 191, 145, 0.72); }
     .game-actions .hell { border-color: rgba(180, 71, 71, 0.72); }
     .game-actions .judge {
-      min-height: 48px;
+      min-height: 44px;
       font-size: 1rem;
       background: linear-gradient(90deg, rgba(180, 71, 71, 0.28), rgba(141, 191, 145, 0.22));
+    }
+
+    .screen[data-phase="instructions"] .game-stage {
+      grid-template-columns: minmax(0, 1fr) 250px;
+      height: min(500px, calc(100svh - 40px));
+    }
+
+    .screen[data-phase="instructions"] .game-panel {
+      grid-template-columns: 190px minmax(0, 1fr);
+    }
+
+    .screen[data-phase="instructions"] .scene-art figcaption {
+      display: none;
+    }
+
+    .screen[data-phase="instructions"] .ghost-name {
+      font-size: clamp(2rem, 3.1vw, 3rem);
+    }
+
+    .screen[data-phase="instructions"] .story {
+      font: 700 clamp(0.95rem, 1.15vw, 1.08rem)/1.35 Arial, Helvetica, sans-serif;
+    }
+
+    .screen[data-phase="instructions"] .substory {
+      font-size: 0.82rem;
+    }
+
+    .screen[data-phase="instructions"] .evidence-strip {
+      display: none;
     }
 
     .details {
@@ -950,6 +979,7 @@
     }
 
     function render() {
+      gameScreen.dataset.phase = state.phase;
       updateMeters();
       updateVoiceControls();
       updateEvidenceStrip();
