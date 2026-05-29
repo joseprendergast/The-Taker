@@ -104,36 +104,53 @@ The build output goes into `Builds/`.
 
 ## GitHub Pages publishing
 
-GitHub Pages is configured to serve the root of the `main` branch. The root `index.html` runs the current browser-playable story prototype:
+The current URL is:
 
 <https://joseprendergast.github.io/The-Taker/>
 
-This Pages version is not the Unity runtime yet. It is a hand-built web prototype that mirrors the GDD judgment loop so the project can be shared immediately.
+Right now, the root `index.html` runs a hand-built browser prototype so the project can be shared immediately. That is not Unity or PowerQuest running in the browser.
 
-Current GitHub Pages settings:
+For the real Unity game in GitHub Pages, use the included GitHub Actions workflow:
 
-- Source: `Deploy from a branch`
-- Branch: `main`
-- Folder: `/ (root)`
+`.github/workflows/deploy-webgl-pages.yml`
+
+Required GitHub Pages settings for the real Unity WebGL build:
+
+- Source: `GitHub Actions`
 - Custom domain: none
-- HTTPS: enabled after GitHub finishes provisioning
+- HTTPS: enabled
+
+Required repository secret:
+
+- `UNITY_LICENSE`
+
+The workflow cannot build until the repo has a valid Unity license secret. This is a Unity/GameCI requirement, not a project-code issue.
+
+To add the license:
+
+1. Go to GitHub repo `Settings`.
+2. Open `Secrets and variables` -> `Actions`.
+3. Create a repository secret named `UNITY_LICENSE`.
+4. Paste a valid Unity license file/string for the Unity account.
+5. Go to `Actions`.
+6. Run `Build Unity WebGL and deploy Pages`.
+
+The workflow is manual on purpose right now. After `UNITY_LICENSE` is configured and one WebGL deployment succeeds, the workflow can be changed to run automatically on pushes to `main`.
 
 ## Unity WebGL publishing
 
-GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project source directly. To replace the lightweight web prototype with the actual Unity game:
+GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project source directly. To build locally instead of through GitHub Actions:
 
 1. Open the project in Unity.
 2. Install WebGL Build Support for the selected Unity version if needed.
 3. Switch platform to `WebGL` in Unity Build Settings.
-4. Build the WebGL player.
-5. Copy the WebGL build output into the repo root, replacing the static landing page files with Unity's generated `index.html`, `Build`, `TemplateData`, and related files.
-6. Commit and push to `main`.
+4. Use `The Taker` -> `Build WebGL` -> `GitHub Pages`.
+5. Deploy the generated `Builds/Pages` folder through GitHub Pages.
 
 Recommended Pages setup for this repo:
 
 - Keep the source repo public.
-- Use `main / root` for the current browser prototype.
-- When WebGL exists, either publish the WebGL output from `main / root` or switch Pages to a separate `gh-pages` branch.
+- Use `GitHub Actions` as the Pages source for the Unity WebGL build.
 - Do not commit Unity `Library`, `Temp`, `Obj`, or generated desktop build folders.
 
 ## Suggested next milestones

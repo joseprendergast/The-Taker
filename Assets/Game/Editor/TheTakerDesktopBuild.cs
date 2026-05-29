@@ -21,6 +21,17 @@ public static class TheTakerDesktopBuild
 		Build("Builds/Linux/TheTaker.x86_64", BuildTarget.StandaloneLinux64);
 	}
 
+	[MenuItem("The Taker/Build WebGL/GitHub Pages")]
+	public static void BuildWebGLForPages()
+	{
+		Build("Builds/Pages", BuildTarget.WebGL);
+	}
+
+	public static void BuildForPages()
+	{
+		BuildWebGLForPages();
+	}
+
 	static void Build(string path, BuildTarget target)
 	{
 		Directory.CreateDirectory(Path.GetDirectoryName(path));
