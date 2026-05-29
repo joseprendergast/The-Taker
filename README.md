@@ -29,7 +29,7 @@ The current goal is to prove the core structure:
 - The PowerQuest default template is installed under `Assets/Game`.
 - The demo has been rethemed into a playable narrative prototype for Fanto.
 - Concept art has been extracted from the supplied GDD into `Assets/Game/ConceptArt/ExtractedFromGDD`.
-- The title screen now uses extracted GDD art as a temporary landing screen.
+- The GitHub Pages site now runs a lightweight browser prototype with `PRESS START`, `NEW GAME`, `CONTINUE`, ghost judgments, endings, and browser-local saves.
 - The prototype covers all nine ghosts from the GDD.
 - Each ghost has an explore/evidence/confront/judge loop.
 - Heaven/Hell choices are tracked.
@@ -71,7 +71,7 @@ The nine ghosts currently represented are:
 - Fanto, Doll, Seelvia, demons, and custom ghost art still need final sprites and animation.
 - Audio is still placeholder/template audio.
 - The desktop build menu exists, but a Unity Editor installation is required to produce executable builds.
-- GitHub Pages requires a Unity WebGL build. The raw Unity project source is not directly playable in Pages.
+- GitHub Pages currently serves a lightweight browser prototype. A true Unity-powered browser build still requires a Unity WebGL export.
 
 ## How to open
 
@@ -102,13 +102,13 @@ In Unity, use:
 
 The build output goes into `Builds/`.
 
-## GitHub Pages / WebGL publishing
+## GitHub Pages publishing
 
-GitHub Pages is configured to serve the root of the `main` branch. The root `index.html` is a shareable landing screen for the project:
+GitHub Pages is configured to serve the root of the `main` branch. The root `index.html` runs the current browser-playable story prototype:
 
 <https://joseprendergast.github.io/The-Taker/>
 
-GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project source directly. The current Pages site is a static landing page; a browser-playable game requires a Unity WebGL export.
+This Pages version is not the Unity runtime yet. It is a hand-built web prototype that mirrors the GDD judgment loop so the project can be shared immediately.
 
 Current GitHub Pages settings:
 
@@ -118,7 +118,9 @@ Current GitHub Pages settings:
 - Custom domain: none
 - HTTPS: enabled after GitHub finishes provisioning
 
-To publish a playable Pages version:
+## Unity WebGL publishing
+
+GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project source directly. To replace the lightweight web prototype with the actual Unity game:
 
 1. Open the project in Unity.
 2. Install WebGL Build Support for the selected Unity version if needed.
@@ -130,7 +132,7 @@ To publish a playable Pages version:
 Recommended Pages setup for this repo:
 
 - Keep the source repo public.
-- Use `main / root` for the current landing page.
+- Use `main / root` for the current browser prototype.
 - When WebGL exists, either publish the WebGL output from `main / root` or switch Pages to a separate `gh-pages` branch.
 - Do not commit Unity `Library`, `Temp`, `Obj`, or generated desktop build folders.
 

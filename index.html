@@ -11,14 +11,13 @@
       --ink: #f3eddc;
       --muted: #b7bcc8;
       --gold: #d8c17a;
-      --red: #9f3434;
-      --panel: rgba(5, 7, 13, 0.72);
-      --line: rgba(216, 193, 122, 0.36);
+      --red: #b44747;
+      --green: #8dbf91;
+      --panel: rgba(5, 7, 13, 0.78);
+      --line: rgba(216, 193, 122, 0.38);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -28,7 +27,12 @@
       font-family: Georgia, "Times New Roman", serif;
     }
 
-    .hero {
+    button, a {
+      font: 700 0.9rem Arial, Helvetica, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .screen {
       min-height: 100vh;
       position: relative;
       display: grid;
@@ -38,37 +42,35 @@
       isolation: isolate;
     }
 
-    .hero::before {
+    .screen::before {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, rgba(5, 7, 13, 0.32), rgba(5, 7, 13, 0.84)),
-        linear-gradient(180deg, rgba(5, 7, 13, 0.08), rgba(5, 7, 13, 0.86)),
+        linear-gradient(90deg, rgba(5, 7, 13, 0.28), rgba(5, 7, 13, 0.84)),
+        linear-gradient(180deg, rgba(5, 7, 13, 0.08), rgba(5, 7, 13, 0.88)),
         url("Assets/Game/Rooms/Title/Sprites/Back_0.png") center / cover no-repeat;
       image-rendering: pixelated;
       transform: scale(1.04);
       z-index: -2;
     }
 
-    .hero::after {
+    .screen::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 40%, transparent 0 32%, rgba(0, 0, 0, 0.74) 74%);
+      background: radial-gradient(circle at 50% 42%, transparent 0 31%, rgba(0, 0, 0, 0.76) 75%);
       z-index: -1;
     }
 
-    .stage {
+    .hidden { display: none !important; }
+
+    .title-stage {
       width: min(920px, 100%);
       display: grid;
       grid-template-columns: minmax(0, 1fr) 280px;
       gap: 26px;
       align-items: end;
-    }
-
-    .title {
-      padding: 28px 0;
     }
 
     h1 {
@@ -89,15 +91,17 @@
       line-height: 1.5;
     }
 
-    .menu {
+    .menu, .game-panel {
       border: 1px solid var(--line);
       background: var(--panel);
-      padding: 18px;
       box-shadow: 0 22px 58px rgba(0, 0, 0, 0.42);
     }
 
+    .menu { padding: 18px; }
+
     .menu button,
-    .menu a {
+    .game-actions button,
+    .link-button {
       width: 100%;
       min-height: 46px;
       display: flex;
@@ -108,36 +112,120 @@
       color: var(--ink);
       text-decoration: none;
       text-transform: uppercase;
-      font: 700 0.9rem Arial, Helvetica, sans-serif;
-      letter-spacing: 0;
       cursor: pointer;
     }
 
     .menu button:hover,
-    .menu a:hover {
+    .game-actions button:hover,
+    .link-button:hover {
       border-color: var(--gold);
       color: white;
       background: rgba(91, 72, 32, 0.38);
     }
 
-    .menu .hidden {
-      display: none;
-    }
-
-    .menu .secondary {
-      margin-top: 10px;
-    }
-
-    .menu .disabled {
+    button[disabled] {
       opacity: 0.45;
       cursor: not-allowed;
     }
+
+    button[disabled]:hover {
+      border-color: var(--line);
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.34);
+    }
+
+    .secondary { margin-top: 10px; }
 
     .note {
       margin: 14px 0 0;
       color: var(--muted);
       font: 0.88rem/1.45 Arial, Helvetica, sans-serif;
     }
+
+    .game-stage {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 290px;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .game-panel {
+      min-height: 470px;
+      padding: 22px;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .scene-label {
+      color: var(--gold);
+      font: 700 0.82rem Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      margin: 0 0 14px;
+    }
+
+    .ghost-name {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .story {
+      margin: 18px 0 0;
+      color: var(--ink);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      line-height: 1.52;
+    }
+
+    .substory {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font: 0.98rem/1.55 Arial, Helvetica, sans-serif;
+    }
+
+    .status-panel {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.48);
+      padding: 16px;
+    }
+
+    .status-panel h2 {
+      margin: 0 0 12px;
+      font: 700 1rem Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .meters {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font: 0.92rem/1.4 Arial, Helvetica, sans-serif;
+    }
+
+    .judgement-log {
+      margin-top: 14px;
+      color: var(--muted);
+      font: 0.86rem/1.45 Arial, Helvetica, sans-serif;
+      max-height: 190px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .game-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .game-actions .wide { grid-column: 1 / -1; }
+    .game-actions .heaven { border-color: rgba(141, 191, 145, 0.72); }
+    .game-actions .hell { border-color: rgba(180, 71, 71, 0.72); }
 
     .details {
       border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -174,21 +262,19 @@
       font-size: 0.95rem;
     }
 
-    .detail a {
-      color: var(--gold);
-    }
+    .detail a { color: var(--gold); }
 
-    @media (max-width: 760px) {
-      .stage {
+    @media (max-width: 800px) {
+      .title-stage, .game-stage {
         grid-template-columns: 1fr;
-      }
-
-      .title {
-        padding-top: 54px;
       }
 
       .menu {
         width: min(360px, 100%);
+      }
+
+      .game-actions {
+        grid-template-columns: 1fr;
       }
 
       .details-inner {
@@ -199,19 +285,46 @@
 </head>
 <body>
   <main>
-    <section class="hero" aria-label="The Taker title screen">
-      <div class="stage">
-        <div class="title">
+    <section id="title-screen" class="screen" aria-label="The Taker title screen">
+      <div class="title-stage">
+        <div>
           <h1>The Taker</h1>
           <p class="tagline">Nine ghosts. One little Judge. A soft-horror point-and-click prototype about evidence, mercy, punishment, and the weight of forever.</p>
         </div>
 
         <nav class="menu" aria-label="Prototype menu">
           <button id="press-start" type="button">Press Start</button>
-          <a id="new-game" class="hidden" href="https://github.com/joseprendergast/The-Taker" aria-label="Open the Unity project source on GitHub">New Game</a>
-          <button id="continue" class="hidden secondary disabled" type="button" disabled>Continue</button>
+          <button id="new-game" class="hidden" type="button">New Game</button>
+          <button id="continue" class="hidden secondary" type="button" disabled>Continue</button>
+          <a class="link-button secondary" href="https://github.com/joseprendergast/The-Taker">Source</a>
           <p id="menu-note" class="note">Press start to open the prototype menu.</p>
         </nav>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen hidden" aria-label="The Taker browser prototype">
+      <div class="game-stage">
+        <article class="game-panel">
+          <div>
+            <p id="scene-label" class="scene-label">Graveyard</p>
+            <h2 id="ghost-name" class="ghost-name">The Innocent</h2>
+            <p id="story" class="story"></p>
+            <p id="substory" class="substory"></p>
+          </div>
+
+          <div id="game-actions" class="game-actions"></div>
+        </article>
+
+        <aside class="status-panel">
+          <h2>Run</h2>
+          <div class="meters">
+            <div id="progress-meter">Ghost 1 / 9</div>
+            <div id="evidence-meter">Evidence 0 / 3</div>
+            <div id="hell-meter">Hell 0</div>
+            <div id="doll-meter">Doll 0 / 9</div>
+          </div>
+          <div id="judgement-log" class="judgement-log"></div>
+        </aside>
       </div>
     </section>
 
@@ -219,11 +332,11 @@
       <div class="details-inner">
         <article class="detail">
           <h2>Status</h2>
-          <p>This page is the shareable GitHub Pages landing screen. The actual game source is a Unity + PowerQuest project.</p>
+          <p>This Pages version is a lightweight browser prototype. The full source remains a Unity + PowerQuest project.</p>
         </article>
         <article class="detail">
-          <h2>Playability</h2>
-          <p>A browser-playable build needs Unity WebGL export. Until then, open the project in Unity from the source repo.</p>
+          <h2>WebGL</h2>
+          <p>A true Unity browser build still needs Unity WebGL export. This page lets people try the story loop now.</p>
         </article>
         <article class="detail">
           <h2>Source</h2>
@@ -234,18 +347,277 @@
   </main>
 
   <script>
+    const saveKey = "the-taker-pages-save-v1";
+
+    const ghosts = [
+      {
+        name: "The Innocent",
+        scene: "The graveyard",
+        encounter: "A shy ghost slips between the graves. His whole life looks ordinary until one memory refuses to fade.",
+        evidence: ["He abandoned his dog in the snow.", "The rest of his life was mediocre, quiet, and almost harmless.", "He cannot find Heaven because one small cruelty still follows him."],
+        doubt: "Can a single brutal act outweigh an otherwise ordinary life?"
+      },
+      {
+        name: "The Everlasting Valentine",
+        scene: "The graveyard",
+        encounter: "A bride with black hair sobs beside a broken stone. The sobbing turns sharp when Fanto steps closer.",
+        evidence: ["She killed four women who got close to her husband.", "Her love became possession.", "No one remembers where her husband went."],
+        doubt: "Love explains the wound, but it does not erase the bodies."
+      },
+      {
+        name: "The Poltergeist",
+        scene: "The abandoned house",
+        encounter: "Candles gutter, doors slam, and a little laugh moves through the walls.",
+        evidence: ["The invisible ghost killed seventeen people while playing.", "The ghost is a lonely child.", "She never understood that her games ended lives."],
+        doubt: "Is she a murderer, or a child trapped inside a death she cannot understand?"
+      },
+      {
+        name: "The Doppelganger",
+        scene: "The mirrored graveyard",
+        encounter: "Another Fanto copies every step a little too late. The graves have changed places.",
+        evidence: ["It has caused confusion, not true harm.", "It enjoys riddles and mischief.", "It can still be condemned if the Judge stops caring."],
+        doubt: "A harmless soul can still be ruined by a careless sentence."
+      },
+      {
+        name: "The Faceless Lady",
+        scene: "The forest",
+        encounter: "A white dress hangs between the trees. Her arms are too long. Her face is missing.",
+        evidence: ["Her children were kidnapped and killed.", "She killed thirty-nine innocents while seeking revenge.", "Grief and madness hollowed her out."],
+        doubt: "How much guilt remains when grief has eaten the mind?"
+      },
+      {
+        name: "The Forgotten",
+        scene: "The crypt",
+        encounter: "A faint shadow waits beside a tomb older than prayer. It barely remembers being a person.",
+        evidence: ["No one remembers his name.", "His good and bad actions are almost gone.", "Ancient crimes still surface in broken fragments."],
+        doubt: "Can forgotten crimes still deserve eternal punishment?"
+      },
+      {
+        name: "The Guilty",
+        scene: "The torture engine",
+        encounter: "Chains pull a colossal wraith upright. Lesser souls scream from the iron around him.",
+        evidence: ["He ordered millions into death.", "He believed cruelty could build a better world.", "His suffering explains him, but does not excuse him."],
+        doubt: "Some crimes make mercy feel impossible."
+      },
+      {
+        name: "The Evil",
+        scene: "The forest",
+        encounter: "A sleeping demon face in a twisted tree opens one amber eye.",
+        evidence: ["He sacrificed children for power.", "Demons still guard his name.", "His victims may connect to the Faceless Lady."],
+        doubt: "Evil can be smaller in number and still feel absolute."
+      },
+      {
+        name: "Seelvia",
+        scene: "The graveyard",
+        encounter: "A blonde ghost smiles like memory. Fanto wants her saved before he wants her judged.",
+        evidence: ["Her truth is personal.", "Fanto became a Judge to find her.", "Love makes the final sentence less honest."],
+        doubt: "The hardest judgement is the one Fanto wants to avoid."
+      }
+    ];
+
+    const titleScreen = document.querySelector("#title-screen");
+    const gameScreen = document.querySelector("#game-screen");
     const pressStart = document.querySelector("#press-start");
     const newGame = document.querySelector("#new-game");
     const continueButton = document.querySelector("#continue");
     const menuNote = document.querySelector("#menu-note");
+    const sceneLabel = document.querySelector("#scene-label");
+    const ghostName = document.querySelector("#ghost-name");
+    const story = document.querySelector("#story");
+    const substory = document.querySelector("#substory");
+    const gameActions = document.querySelector("#game-actions");
+    const progressMeter = document.querySelector("#progress-meter");
+    const evidenceMeter = document.querySelector("#evidence-meter");
+    const hellMeter = document.querySelector("#hell-meter");
+    const dollMeter = document.querySelector("#doll-meter");
+    const judgementLog = document.querySelector("#judgement-log");
+
+    let state = createNewState();
+
+    function createNewState() {
+      return {
+        ghostIndex: 0,
+        evidence: 0,
+        doll: 0,
+        hell: 0,
+        phase: "encounter",
+        judgements: [],
+        selfJudgement: null
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(saveKey, JSON.stringify(state));
+      updateContinueButton();
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(saveKey);
+      if (!raw) return false;
+      try {
+        state = Object.assign(createNewState(), JSON.parse(raw));
+        return true;
+      } catch {
+        localStorage.removeItem(saveKey);
+        return false;
+      }
+    }
+
+    function updateContinueButton() {
+      const hasSave = Boolean(localStorage.getItem(saveKey));
+      continueButton.disabled = !hasSave;
+    }
+
+    function showGame() {
+      titleScreen.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      render();
+    }
+
+    function button(label, action, className = "") {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.textContent = label;
+      item.className = className;
+      item.addEventListener("click", action);
+      return item;
+    }
+
+    function setActions(actions) {
+      gameActions.replaceChildren(...actions);
+    }
+
+    function currentGhost() {
+      return ghosts[Math.min(state.ghostIndex, ghosts.length - 1)];
+    }
+
+    function collectEvidence() {
+      state.evidence = Math.min(3, state.evidence + 1);
+      state.phase = "evidence";
+      saveState();
+      render();
+    }
+
+    function meetDoll() {
+      state.doll = Math.min(ghosts.length, state.doll + 1);
+      state.phase = "doll";
+      saveState();
+      render();
+    }
+
+    function judge(destination) {
+      const ghost = currentGhost();
+      if (destination === "Hell") state.hell += 1;
+      state.judgements.push({ name: ghost.name, destination });
+      state.ghostIndex += 1;
+      state.evidence = 0;
+      state.phase = state.ghostIndex >= ghosts.length ? "self" : "encounter";
+      saveState();
+      render();
+    }
+
+    function judgeSelf(destination) {
+      state.selfJudgement = destination;
+      state.phase = "ending";
+      saveState();
+      render();
+    }
+
+    function endingName() {
+      const seelvia = state.judgements.find(item => item.name === "Seelvia");
+      const seelviaHell = seelvia && seelvia.destination === "Hell";
+      if (state.doll >= ghosts.length) return "DOLL'S ENDING";
+      if (state.hell === 0) return "THE GUARDIAN ANGEL";
+      if (seelviaHell && state.selfJudgement === "Hell") return "LOVE IN HELL";
+      if (seelviaHell && state.selfJudgement === "Heaven") return "THE GUILTY ENDING";
+      if (!seelviaHell && state.selfJudgement === "Hell") return "THE RIGHT THING";
+      return "HAPPILY EVER AFTER";
+    }
+
+    function updateMeters() {
+      progressMeter.textContent = state.ghostIndex >= ghosts.length
+        ? "Ghosts judged 9 / 9"
+        : `Ghost ${state.ghostIndex + 1} / ${ghosts.length}`;
+      evidenceMeter.textContent = `Evidence ${state.evidence} / 3`;
+      hellMeter.textContent = `Hell ${state.hell}`;
+      dollMeter.textContent = `Doll ${state.doll} / ${ghosts.length}`;
+      judgementLog.innerHTML = state.judgements.length
+        ? state.judgements.map(item => `${item.name}: ${item.destination}`).join("<br>")
+        : "No souls judged yet.";
+    }
+
+    function render() {
+      updateMeters();
+
+      if (state.phase === "self") {
+        sceneLabel.textContent = "The last pending judgement";
+        ghostName.textContent = "Fanto";
+        story.textContent = `The Archangel turns his scythe toward the little Judge. ${state.hell} souls were sent to Hell.`;
+        substory.textContent = "Now Fanto must judge himself: salvation, or damnation.";
+        setActions([
+          button("Salvation", () => judgeSelf("Heaven"), "heaven"),
+          button("Damnation", () => judgeSelf("Hell"), "hell")
+        ]);
+        return;
+      }
+
+      if (state.phase === "ending") {
+        sceneLabel.textContent = "Ending unlocked";
+        ghostName.textContent = endingName();
+        story.textContent = "The judgement is complete. The prototype has saved this run in your browser.";
+        substory.textContent = "Start again to test another moral path, or open the Unity project source for the full build.";
+        setActions([
+          button("New Game", () => { state = createNewState(); saveState(); render(); }, "wide"),
+          button("Source", () => { window.location.href = "https://github.com/joseprendergast/The-Taker"; }, "wide")
+        ]);
+        return;
+      }
+
+      const ghost = currentGhost();
+      sceneLabel.textContent = ghost.scene;
+      ghostName.textContent = ghost.name;
+
+      if (state.phase === "evidence") {
+        const evidence = ghost.evidence[Math.max(0, state.evidence - 1)];
+        story.textContent = evidence;
+        substory.textContent = state.evidence >= 3
+          ? "You have enough to make a sentence, though enough is not the same as certainty."
+          : "There is more to learn before the well becomes a mirror.";
+      } else if (state.phase === "doll") {
+        story.textContent = "Doll passed through the fog and left a small charm on the stone.";
+        substory.textContent = "She asks why every universal law must be black or white.";
+      } else {
+        story.textContent = ghost.encounter;
+        substory.textContent = ghost.doubt;
+      }
+
+      setActions([
+        button("Search", collectEvidence),
+        button("Find Doll", meetDoll),
+        button("Heaven", () => judge("Heaven"), "heaven"),
+        button("Hell", () => judge("Hell"), "hell")
+      ]);
+    }
 
     pressStart.addEventListener("click", () => {
       pressStart.classList.add("hidden");
       newGame.classList.remove("hidden");
       continueButton.classList.remove("hidden");
-      menuNote.textContent = "New Game opens the Unity project source. Continue unlocks after a WebGL save system exists.";
+      menuNote.textContent = "New Game starts the browser prototype. Continue resumes this browser's saved run.";
       newGame.focus();
     });
+
+    newGame.addEventListener("click", () => {
+      state = createNewState();
+      saveState();
+      showGame();
+    });
+
+    continueButton.addEventListener("click", () => {
+      if (loadState()) showGame();
+    });
+
+    updateContinueButton();
   </script>
 </body>
 </html>
