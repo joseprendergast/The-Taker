@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Taker</title>
+  <meta name="description" content="The Taker, a 2D soft-horror point-and-click adventure prototype built with Unity and PowerQuest.">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f3eddc;
+      --muted: #b7bcc8;
+      --gold: #d8c17a;
+      --red: #9f3434;
+      --panel: rgba(5, 7, 13, 0.72);
+      --line: rgba(216, 193, 122, 0.36);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #05070d;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 32px 18px;
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5, 7, 13, 0.32), rgba(5, 7, 13, 0.84)),
+        linear-gradient(180deg, rgba(5, 7, 13, 0.08), rgba(5, 7, 13, 0.86)),
+        url("Assets/Game/Rooms/Title/Sprites/Back_0.png") center / cover no-repeat;
+      image-rendering: pixelated;
+      transform: scale(1.04);
+      z-index: -2;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, transparent 0 32%, rgba(0, 0, 0, 0.74) 74%);
+      z-index: -1;
+    }
+
+    .stage {
+      width: min(920px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 26px;
+      align-items: end;
+    }
+
+    .title {
+      padding: 28px 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(3rem, 9vw, 6.8rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.72);
+    }
+
+    .tagline {
+      max-width: 620px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.5;
+    }
+
+    .menu {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 18px;
+      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.42);
+    }
+
+    .menu button,
+    .menu a {
+      width: 100%;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.34);
+      color: var(--ink);
+      text-decoration: none;
+      text-transform: uppercase;
+      font: 700 0.9rem Arial, Helvetica, sans-serif;
+      letter-spacing: 0;
+      cursor: pointer;
+    }
+
+    .menu button:hover,
+    .menu a:hover {
+      border-color: var(--gold);
+      color: white;
+      background: rgba(91, 72, 32, 0.38);
+    }
+
+    .menu .hidden {
+      display: none;
+    }
+
+    .menu .secondary {
+      margin-top: 10px;
+    }
+
+    .menu .disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font: 0.88rem/1.45 Arial, Helvetica, sans-serif;
+    }
+
+    .details {
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      background: #05070d;
+      padding: 34px 18px 44px;
+    }
+
+    .details-inner {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .detail {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .detail h2 {
+      margin: 0 0 10px;
+      font: 700 1rem Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .detail p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .detail a {
+      color: var(--gold);
+    }
+
+    @media (max-width: 760px) {
+      .stage {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        padding-top: 54px;
+      }
+
+      .menu {
+        width: min(360px, 100%);
+      }
+
+      .details-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" aria-label="The Taker title screen">
+      <div class="stage">
+        <div class="title">
+          <h1>The Taker</h1>
+          <p class="tagline">Nine ghosts. One little Judge. A soft-horror point-and-click prototype about evidence, mercy, punishment, and the weight of forever.</p>
+        </div>
+
+        <nav class="menu" aria-label="Prototype menu">
+          <button id="press-start" type="button">Press Start</button>
+          <a id="new-game" class="hidden" href="https://github.com/joseprendergast/The-Taker" aria-label="Open the Unity project source on GitHub">New Game</a>
+          <button id="continue" class="hidden secondary disabled" type="button" disabled>Continue</button>
+          <p id="menu-note" class="note">Press start to open the prototype menu.</p>
+        </nav>
+      </div>
+    </section>
+
+    <section class="details" aria-label="Project details">
+      <div class="details-inner">
+        <article class="detail">
+          <h2>Status</h2>
+          <p>This page is the shareable GitHub Pages landing screen. The actual game source is a Unity + PowerQuest project.</p>
+        </article>
+        <article class="detail">
+          <h2>Playability</h2>
+          <p>A browser-playable build needs Unity WebGL export. Until then, open the project in Unity from the source repo.</p>
+        </article>
+        <article class="detail">
+          <h2>Source</h2>
+          <p><a href="https://github.com/joseprendergast/The-Taker">View the repository</a> or build desktop/WebGL from Unity.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const pressStart = document.querySelector("#press-start");
+    const newGame = document.querySelector("#new-game");
+    const continueButton = document.querySelector("#continue");
+    const menuNote = document.querySelector("#menu-note");
+
+    pressStart.addEventListener("click", () => {
+      pressStart.classList.add("hidden");
+      newGame.classList.remove("hidden");
+      continueButton.classList.remove("hidden");
+      menuNote.textContent = "New Game opens the Unity project source. Continue unlocks after a WebGL save system exists.";
+      newGame.focus();
+    });
+  </script>
+</body>
+</html>

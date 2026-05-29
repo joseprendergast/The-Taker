@@ -4,6 +4,8 @@ Desktop Unity + PowerQuest prototype based on the supplied GDD.
 
 Repository: <https://github.com/joseprendergast/The-Taker>
 
+Shareable Pages URL: <https://joseprendergast.github.io/The-Taker/>
+
 ## Project status
 
 This is an early playable narrative prototype, not a finished production game. It establishes the project in Unity, imports PowerQuest, and converts the starter adventure template into the first interactive version of **The Taker**.
@@ -102,21 +104,34 @@ The build output goes into `Builds/`.
 
 ## GitHub Pages / WebGL publishing
 
-GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project source directly.
+GitHub Pages is configured to serve the root of the `main` branch. The root `index.html` is a shareable landing screen for the project:
+
+<https://joseprendergast.github.io/The-Taker/>
+
+GitHub Pages can host a Unity WebGL build, but it cannot run the Unity project source directly. The current Pages site is a static landing page; a browser-playable game requires a Unity WebGL export.
+
+Current GitHub Pages settings:
+
+- Source: `Deploy from a branch`
+- Branch: `main`
+- Folder: `/ (root)`
+- Custom domain: none
+- HTTPS: enabled after GitHub finishes provisioning
 
 To publish a playable Pages version:
 
 1. Open the project in Unity.
 2. Install WebGL Build Support for the selected Unity version if needed.
 3. Switch platform to `WebGL` in Unity Build Settings.
-4. Build the WebGL player into a folder such as `Builds/WebGL`.
-5. Copy the WebGL build output into a Pages branch or a docs folder, depending on the Pages setup.
-6. In GitHub repo settings, enable Pages for that branch/folder.
+4. Build the WebGL player.
+5. Copy the WebGL build output into the repo root, replacing the static landing page files with Unity's generated `index.html`, `Build`, `TemplateData`, and related files.
+6. Commit and push to `main`.
 
 Recommended Pages setup for this repo:
 
-- Keep Unity source on `main`.
-- Publish WebGL output from a separate `gh-pages` branch.
+- Keep the source repo public.
+- Use `main / root` for the current landing page.
+- When WebGL exists, either publish the WebGL output from `main / root` or switch Pages to a separate `gh-pages` branch.
 - Do not commit Unity `Library`, `Temp`, `Obj`, or generated desktop build folders.
 
 ## Suggested next milestones
